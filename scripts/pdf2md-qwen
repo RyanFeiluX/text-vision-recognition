@@ -1,0 +1,20 @@
+#!/bin/bash
+# pdf2md-qwen — 使用 Qwen VL 将图片/PDF转换为Markdown
+# 安装后即可通过此命令在任何目录使用
+
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+
+if [ ! -f "$PROJECT_DIR/scripts/qwen_ocr.py" ]; then
+    echo "❌ 错误：找不到 qwen_ocr.py"
+    echo "   期望路径: $PROJECT_DIR/scripts/qwen_ocr.py"
+    exit 1
+fi
+
+# 优先使用 Hermes venv 的 Python，其次系统 Python
+HERMES_PYTHON="$HOME/.hermes/hermes-agent/venv/bin/python3"
+if [ -x "$HERMES_PYTHON" ]; then
+    exec "$HERMES_PYTHON" "$PROJECT_DIR/scripts/qwen_ocr.py" "$@"
+else
+    exec python3 "$PROJECT_DIR/scripts/qwen_ocr.py" "$@"
+fi
