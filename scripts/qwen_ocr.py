@@ -83,7 +83,7 @@ def _get_env(name: str) -> str:
     )
 
 
-def encode_image(image: Image.Image, fmt: str = "PNG", max_side: int = MAX_PIXELS) -> str:
+def encode_image(image: Image.Image, fmt: str = "JPEG", max_side: int = MAX_PIXELS) -> str:
     """将PIL图像缩放后编码为base64"""
     # 缩放至合理尺寸
     w, h = image.size
@@ -91,14 +91,14 @@ def encode_image(image: Image.Image, fmt: str = "PNG", max_side: int = MAX_PIXEL
         ratio = max_side / max(w, h)
         image = image.resize((int(w * ratio), int(h * ratio)), Image.LANCZOS)
 
-    buf = image.tobytes("png" if fmt == "PNG" else "jpeg", "RGB")
+    buf = image.tobytes("jpeg", "RGB")
     return base64.b64encode(buf).decode("utf-8")
 
 
 def encode_image_from_path(path: str, max_side: int = MAX_PIXELS) -> Tuple[str, str]:
     """读取图片文件，返回 (base64字符串, mime类型)"""
     img = Image.open(path)
-    fmt = "PNG"
+    fmt = "JPEG"
     return encode_image(img, fmt, max_side), f"image/{fmt.lower()}"
 
 
@@ -206,9 +206,9 @@ def process_pdf(
         with ThreadPoolExecutor(max_workers=min(MAX_WORKERS, len(images))) as executor:
             futures = {}
             for i, img in enumerate(images):
-                img_data = encode_image(img, "PNG", MAX_PIXELS)
+                img_data = encode_image(img, "JPEG", MAX_PIXELS)
                 future = executor.submit(
-                    ocr_image_with_qwen, client, img_data, "image/png", model, prompt
+                    ocr_image_with_qwen, client, img_data, "image/jpeg", model, prompt
                 )
                 futures[future] = i
 
