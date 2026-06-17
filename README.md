@@ -71,32 +71,38 @@ pdf2md-qwen -i 文档.pdf -o 输出.md
 
 如果使用 [Hermes Agent](https://hermes-agent.nousresearch.com/)，可以通过以下方式安装为技能：
 
-### 方式一：GitHub tap 安装
+### 方式一：GitHub tap 安装（推荐）
 
 ```bash
 hermes skills tap add RyanFeiluX/text-vision-recognition
 hermes skills install text-vision-recognition
 ```
 
-### 方式二：手动安装
+### 方式二：直接 URL 安装
 
 ```bash
-mkdir -p ~/.hermes/skills/productivity/text-vision-recognition
-cp -r scripts SKILL.md requirements.txt references assets \
-  ~/.hermes/skills/productivity/text-vision-recognition/
+hermes skills install https://raw.githubusercontent.com/RyanFeiluX/text-vision-recognition/main/skills/text-vision-recognition/SKILL.md
+```
+
+### 方式三：手动安装
+
+```bash
+cp -r skills/text-vision-recognition ~/.hermes/skills/productivity/
 pip install -r requirements.txt
 ```
 
-然后在 `~/.hermes/.env` 中添加：
+### 方式四：一键脚本（自动检测 Hermes 环境）
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/RyanFeiluX/text-vision-recognition/main/skills/text-vision-recognition/install.sh | bash
+```
+
+## 🔑 配置 API Key
+
+在 `~/.hermes/.env` 中添加：
 
 ```ini
 QWEN_API_KEY=your_api_key_here
-```
-
-### 方式三：一键脚本（自动检测 Hermes 环境）
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/RyanFeiluX/text-vision-recognition/main/install.sh | bash
 ```
 
 ## 🔧 高级用法
@@ -135,19 +141,20 @@ pdf2md-qwen -i 多页文档.pdf -o 结果.md --no-parallel
 
 ```
 text-vision-recognition/
-├── SKILL.md              # Hermes 技能描述
+├── skills/
+│   └── text-vision-recognition/    # Hermes 技能包
+│       ├── SKILL.md                # 技能描述
+│       ├── scripts/
+│       │   ├── qwen_ocr.py         # 核心引擎（PDF + 图片处理）
+│       │   └── pdf2md-qwen         # CLI 快捷命令
+│       ├── references/
+│       │   └── configuration.md    # API Key 配置指南
+│       ├── assets/
+│       │   └── templates/
+│       └── install.sh              # 一键安装脚本
 ├── README.md             # 本文件
-├── install.sh            # 一键安装脚本
 ├── requirements.txt      # Python 依赖
-├── scripts/
-│   ├── qwen_ocr.py       # 核心引擎（PDF + 图片处理）
-│   └── pdf2md-qwen       # CLI 快捷命令
-├── references/
-│   └── configuration.md  # API Key 配置指南
-└── assets/
-    └── templates/
-        └── markdown-template.md
-```
+└── .gitignore
 
 ## 🔑 环境变量
 
